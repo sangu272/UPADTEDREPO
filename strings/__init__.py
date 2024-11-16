@@ -47,9 +47,8 @@ for filename in os.listdir(r"./strings/langs/"):
                 languages[language_name][item] = languages["en"][item]
     try:
         languages_present[language_name] = languages[language_name]["name"]
-    except:
-        print(
-            "There is some issue with the language file inside bot. Please report it to the @PBX_CHAT on Telegram"
-        )
-        sys.exit()
+    except Exception as e:
+                import traceback 
+                print(f"Error loading {filename}: {e}")
+                traceback.print_exc()
         
