@@ -5,7 +5,7 @@ from pyrogram import Client, filters
 auto_react_enabled = True
 
 # Emoji to react with
-react_emoji = "💋", "❤️", "✅"
+react_emoji = "❤️"
 
 # Command to toggle auto reactions
 @app.on_message(filters.command("react_off"))
