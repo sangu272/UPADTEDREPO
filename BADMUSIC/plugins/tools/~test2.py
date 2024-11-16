@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from collections import defaultdict
-from pyrogram.types import message
+from pyrogram.types import Message
 from BADMUSIC import app
 
 @app.on_message(filters.command("down"))
