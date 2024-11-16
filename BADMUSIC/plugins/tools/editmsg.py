@@ -1,3 +1,4 @@
+from BADMUSIC import app
 from pyrogram import Client, filters
 import asyncio
 
