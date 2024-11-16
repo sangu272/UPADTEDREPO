@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from collections import defaultdict
 from BADMUSIC import app
 
-@app.on_message(filters.command("download"))
+@app.on_message(filters.command("down"))
 async def download_media(client, message):
     if message.reply_to_message:
         # Download media from Telegram
