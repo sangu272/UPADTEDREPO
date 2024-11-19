@@ -25,8 +25,8 @@ pykeyboard
 pyshorteners
 unidecode
 pyromod
-
-ntgcalls==1.2.3
+py-tgcalls==1.2.9
+ntgcalls==1.1.2
 Abg==2.5.2
 python-dotenv
 pyyaml
