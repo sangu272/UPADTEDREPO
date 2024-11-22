@@ -1,6 +1,7 @@
 import os
 import asyncio
 import time
+import requests
 from urllib.parse import urlparse
 from pyrogram import Client, filters
 from pyrogram.types import Message
