@@ -1,24 +1,28 @@
 import os
 import asyncio
-import requests
 import yt_dlp
 from time import time
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from youtube_search import YoutubeSearch
+import requests
 from BADMUSIC import app
 
 # Define a dictionary to track the last message timestamp for each user
 user_last_message_time = {}
 user_command_count = {}
+
 # Define the threshold for command spamming (e.g., 2 commands within 5 seconds)
 SPAM_THRESHOLD = 2
 SPAM_WINDOW_SECONDS = 5
 
+# Path to the cookies file (make sure you have the cookies.txt file in the same directory or provide the full path)
+COOKIES_FILE = 'cookies.txt'
+
 
 # Command to search and download song
 @app.on_message(filters.command("song"))
-async def download_song(_, message):
+async def download_song(_, message: Message):
     user_id = message.from_user.id
     current_time = time()
     
@@ -44,7 +48,13 @@ async def download_song(_, message):
 
     # Searching for the song using YouTubeSearch
     m = await message.reply("🔄 **Searching...**")
-    ydl_ops = {"format": "bestaudio[ext=m4a]"}  # Options to download audio in m4a format
+    ydl_opts = {
+        "format": "bestaudio[ext=m4a]",  # Options to download audio in m4a format
+        "noplaylist": True,  # Don't download playlists
+        "quiet": True,
+        "logtostderr": False,
+        "cookiefile": COOKIES_FILE,  # Path to your cookies.txt file
+    }
 
     try:
         # Search for the song
@@ -67,7 +77,7 @@ async def download_song(_, message):
 
         # Now, download the audio using yt_dlp
         await m.edit("📥 **Downloading...**")
-        with yt_dlp.YoutubeDL(ydl_ops) as ydl:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(link, download=False)
             audio_file = ydl.prepare_filename(info_dict)
             ydl.download([link])
