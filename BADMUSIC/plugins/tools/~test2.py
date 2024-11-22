@@ -17,7 +17,7 @@ SPAM_THRESHOLD = 2
 SPAM_WINDOW_SECONDS = 5
 
 # Path to the cookies file (make sure you have the cookies.txt file in the same directory or provide the full path)
-COOKIES_FILE = 'cookies.txt'
+COOKIES_FILE = 'cookies/cookies.txt'
 
 
 # Command to search and download song
