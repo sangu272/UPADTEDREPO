@@ -93,6 +93,3 @@ async def download_song(_, message):
     except Exception as e:
         await m.edit("⚠️ **An error occurred!**")
         print(f"Error: {str(e)}")
-
-# Run the bot
-app.run()
