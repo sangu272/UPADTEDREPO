@@ -16,6 +16,9 @@ user_command_count = {}
 SPAM_THRESHOLD = 2
 SPAM_WINDOW_SECONDS = 5
 
+# Path to the cookies file (ensure you have the cookies.txt file in the same directory or provide the full path)
+COOKIES_FILE = 'cookies/cookies.txt'
+
 
 def get_text(message: Message) -> str:
     """Extract Text From Commands"""
@@ -77,6 +80,7 @@ async def download_video(_, message: Message):
         "prefer_ffmpeg": True,
         "geo_bypass": True,
         "nocheckcertificate": True,
+        "cookiefile": COOKIES_FILE,  # Path to your cookies.txt file
         "postprocessors": [{"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}],
         "outtmpl": f"{video_id}.mp4",  # Save the file as video_id.mp4
         "logtostderr": False,
