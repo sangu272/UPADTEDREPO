@@ -1,80 +1,74 @@
-import future
-import asyncio
 import os
+import asyncio
 import time
 from urllib.parse import urlparse
-import wget
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import Message
 from youtubesearchpython import SearchVideos
 from yt_dlp import YoutubeDL
 from BADMUSIC import app
 
+# Define a dictionary to track the last message timestamp for each user
+user_last_message_time = {}
+user_command_count = {}
+# Define the threshold for command spamming (e.g., 2 commands within 5 seconds)
+SPAM_THRESHOLD = 2
+SPAM_WINDOW_SECONDS = 5
 
-def get_file_extension_from_url(url):
-    url_path = urlparse(url).path
-    basename = os.path.basename(url_path)
-    return basename.split(".")[-1]
 
-
-def get_text(message: Message) -> [None, str]:
+def get_text(message: Message) -> str:
     """Extract Text From Commands"""
-    text_to_return = message.text
-    if message.text is None:
+    if message.text is None or len(message.text.split()) <= 1:
         return None
-    if " " in text_to_return:
-        try:
-            return message.text.split(None, 1)[1]
-        except IndexError:
-            return None
-    else:
-        return None
+    return message.text.split(None, 1)[1]
 
 
 @app.on_message(filters.command("video"))
-async def download_song(_, message):
+async def download_video(_, message: Message):
     user_id = message.from_user.id
-    # Update the last message timestamp for the user
+    current_time = time.time()
+
+    # Spam protection
     last_message_time = user_last_message_time.get(user_id, 0)
     if current_time - last_message_time < SPAM_WINDOW_SECONDS:
-        # If less than the spam window time has passed since the last message
         user_last_message_time[user_id] = current_time
         user_command_count[user_id] = user_command_count.get(user_id, 0) + 1
         if user_command_count[user_id] > SPAM_THRESHOLD:
-            # Block the user if they exceed the threshold
-            hu = await message.reply_text(f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**")
-            await asyncio.sleep(3)
-            await hu.delete()
-            return 
+            await message.reply_text(f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**")
+            return
     else:
-        # If more than the spam window time has passed, reset the command count and update the message timestamp
         user_command_count[user_id] = 1
         user_last_message_time[user_id] = current_time
 
-    urlissed = get_text(message)
-    await message.delete()
-    user_id = message.from_user.id
-    user_name = message.from_user.first_name
-    chutiya = "[" + user_name + "](tg://user?id=" + str(user_id) + ")"
-
-    pablo = await client.send_message(message.chat.id, f"sᴇᴀʀᴄʜɪɴɢ, ᴩʟᴇᴀsᴇ ᴡᴀɪᴛ...")
-    if not urlissed:
-        await pablo.edit(
-            "😴 sᴏɴɢ ɴᴏᴛ ғᴏᴜɴᴅ ᴏɴ ʏᴏᴜᴛᴜʙᴇ.\n\n» ᴍᴀʏʙᴇ ᴛᴜɴᴇ ɢᴀʟᴛɪ ʟɪᴋʜᴀ ʜᴏ, ᴩᴀᴅʜᴀɪ - ʟɪᴋʜᴀɪ ᴛᴏʜ ᴋᴀʀᴛᴀ ɴᴀʜɪ ᴛᴜ !"
-        )
+    # Get the video search query from the message
+    query = get_text(message)
+    if not query:
+        await message.reply_text("Please provide a valid song name or URL to search.")
         return
 
-    search = SearchVideos(f"{urlissed}", offset=1, mode="dict", max_results=1)
-    mi = search.result()
-    mio = mi["search_result"]
-    mo = mio[0]["link"]
-    thum = mio[0]["title"]
-    fridayz = mio[0]["id"]
-    thums = mio[0]["channel"]
-    kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
-    await asyncio.sleep(0.6)
-    url = mo
-    sedlyf = wget.download(kekme)
+    # Notify user about the search
+    await message.reply_text("🔄 **Searching for video... Please wait.**")
+
+    # Search for the video on YouTube
+    search = SearchVideos(query, offset=1, mode="dict", max_results=1)
+    search_result = search.result()
+    if not search_result["search_result"]:
+        await message.reply_text("😴 **No video found! Please make sure the query is correct.**")
+        return
+
+    # Extract video details
+    video_info = search_result["search_result"][0]
+    video_url = video_info["link"]
+    video_title = video_info["title"]
+    video_id = video_info["id"]
+    video_channel = video_info["channel"]
+    thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+
+    # Download video thumbnail
+    thumbnail_path = f"{video_id}_thumbnail.jpg"
+    await asyncio.to_thread(requests.get, thumbnail_url, allow_redirects=True)
+
+    # Define the download options
     opts = {
         "format": "best",
         "addmetadata": True,
@@ -83,42 +77,33 @@ async def download_song(_, message):
         "geo_bypass": True,
         "nocheckcertificate": True,
         "postprocessors": [{"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}],
-        "outtmpl": "%(id)s.mp4",
+        "outtmpl": f"{video_id}.mp4",  # Save the file as video_id.mp4
         "logtostderr": False,
         "quiet": True,
     }
+
+    # Download the video using yt_dlp
     try:
-        with YoutubeDL(opts) as ytdl:
-            infoo = ytdl.extract_info(url, False)
-            round(infoo["duration"] / 60)
-            ytdl_data = ytdl.extract_info(url, download=True)
-
+        with YoutubeDL(opts) as ydl:
+            ydl_data = ydl.extract_info(video_url, download=True)
+            video_file = f"{ydl_data['id']}.mp4"
     except Exception as e:
-        await pablo.edit(f"**ғᴀɪʟᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ.** \n**ᴇʀʀᴏʀ :** `{str(e)}`")
+        await message.reply_text(f"**Failed to download video. Error:** `{str(e)}`")
         return
-    c_time = time.time()
-    file_stark = f"{ytdl_data['id']}.mp4"
-    capy = f"❄ **ᴛɪᴛʟᴇ :** [{thum}]({mo})\n💫 **ᴄʜᴀɴɴᴇʟ :** {thums}\n✨ **sᴇᴀʀᴄʜᴇᴅ :** {urlissed}\n🥀 **ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ :** {chutiya}"
-    await client.send_video(
-        message.chat.id,
-        video=open(file_stark, "rb"),
-        duration=int(ytdl_data["duration"]),
-        file_name=str(ytdl_data["title"]),
-        thumb=sedlyf,
-        caption=capy,
-        supports_streaming=True,
-        progress_args=(
-            pablo,
-            c_time,
-            f"» ᴩʟᴇᴀsᴇ ᴡᴀɪᴛ...\n\nᴜᴩʟᴏᴀᴅɪɴɢ `{urlissed}` ғʀᴏᴍ ʏᴏᴜᴛᴜʙᴇ sᴇʀᴠᴇʀs...💫",
-            file_stark,
-        ),
-    )
-    await pablo.delete()
-    for files in (sedlyf, file_stark):
-        if files and os.path.exists(files):
-            os.remove(files)
 
+    # Send the downloaded video to the user
+    caption = f"❄ **Title:** [{video_title}]({video_url})\n💫 **Channel:** {video_channel}\n✨ **Searched:** {query}\n🥀 **Requested by:** {message.from_user.mention}"
+
+    await message.reply_video(
+        video=open(video_file, "rb"),
+        caption=caption,
+        thumb=thumbnail_path,
+        supports_streaming=True
+    )
+
+    # Clean up downloaded files (video and thumbnail)
+    os.remove(video_file)
+    os.remove(thumbnail_path)
 
 __MODULE__ = "sᴏɴɢs"
 __HELP__ = """ 
