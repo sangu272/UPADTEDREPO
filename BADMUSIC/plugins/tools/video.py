@@ -81,6 +81,7 @@ async def download_video(_, message: Message):
         "geo_bypass": True,
         "nocheckcertificate": True,
         "cookiefile": COOKIES_FILE,  # Path to your cookies.txt file
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",  # Set a user agent
         "postprocessors": [{"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}],
         "outtmpl": f"{video_id}.mp4",  # Save the file as video_id.mp4
         "logtostderr": False,
