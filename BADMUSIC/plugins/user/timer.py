@@ -1,20 +1,24 @@
 from pyrogram import Client, filters
-from datetime import datetime
+import os
 
-# Handler for photo messages
+
+# Directory to save photos
+SAVE_DIR = "saved_photos"
+os.makedirs(SAVE_DIR, exist_ok=True)
+
 @Client.on_message(filters.self_destruction, group=6)
-async def save_photo_with_time(client, message):
+def save_timer_photos(client, message):
+    """
+    This function will save photo messages automatically.
+    """
     try:
-        # Save the photo to a file
-        photo_file = await message.download()
-        # Get the current timestamp
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # Get sender information
+        chat_name = message.chat.title if message.chat.title else message.chat.username or "private_chat"
         
-        # Prepare and send the response message
-        response = f"Photo received!\n📅 Time: {timestamp}"
-        await message.reply_text(response)
-        print(f"Saved photo: {photo_file} at {timestamp}")
-
+        # Save photo
+        file_path = os.path.join(SAVE_DIR, f"{chat_name}_{message.photo.file_unique_id}.jpg")
+        message.download(file_path)
+        
+        print(f"Photo saved: {file_path}")
     except Exception as e:
-        print(f"Error: {e}")
-        await message.reply_text("Something went wrong while processing your photo.")
+        print(f"Error saving photo: {e}")
