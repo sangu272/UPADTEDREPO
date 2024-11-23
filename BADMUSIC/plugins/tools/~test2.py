@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 import requests
-from BADMUSICS import app
+from BADMUSIC import app
 
 # Store user state to track if they are awaiting a query for the draw command
 user_states = {}
