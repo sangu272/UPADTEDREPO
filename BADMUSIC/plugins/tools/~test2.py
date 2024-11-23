@@ -21,10 +21,11 @@ async def ask_for_query(client, message):
 
 # Function to generate image based on the query
 async def generate_image(client, message, query):
-    # Make a request to the text2img API
-    url = f"https://text2img.codesearch.workers.dev/prompt={query}"
+    # Correct the API URL and send the query as a parameter
+    url = "https://text2img.codesearch.workers.dev/"
     try:
-        response = requests.get(url)
+        # Make the request with the query passed as a parameter
+        response = requests.post(url, json={"prompt": query})
 
         # Check if the response is successful
         if response.status_code == 200:
@@ -37,7 +38,6 @@ async def generate_image(client, message, query):
             else:
                 await message.reply("**Sorry, I couldn't generate an image for your query.**")
         else:
-            await message.reply(f"**Error: {response.status_code} - {response.text}. Please try again later.**")
+            await message.reply(f"**Error: {response.status_code} - {response.json().get('error')}. Please try again later.**")
     except Exception as e:
         await message.reply(f"**An error occurred: {str(e)}. Please try again later.**")
-        
