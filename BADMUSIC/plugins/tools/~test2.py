@@ -8,7 +8,7 @@ def download_video(url):
     ydl_opts = {
         'format': 'best',
         'outtmpl': 'downloads/%(title)s.%(ext)s',  # Video save location
-        'cookiefile': 'cookies.txt',  # Path to cookies file
+        'cookiefile': 'cookies/cookies.txt',  # Path to cookies file
     }
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
