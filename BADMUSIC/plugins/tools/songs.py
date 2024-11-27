@@ -103,3 +103,13 @@ async def download_song(_, message: Message):
     except Exception as e:
         await m.edit("⚠️ **An error occurred!**")
         print(f"Error: {str(e)}")
+
+__MODULE__ = "sᴏɴɢs"
+__HELP__ = """ 
+
+## sᴏɴɢs/ sᴏɴɢ ᴍᴘ3 ᴠɪᴅᴇᴏ ᴍᴘ4 ᴅᴏᴡɴʟᴀᴏᴅ.
+
+/song ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴍᴘ3 ꜱᴏɴɢ ᴅᴏᴡɴʟᴏᴀᴅ.
+/video ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴠɪᴅᴇᴏ ꜱᴏɴɢ.
+/shorts ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ sʜᴏʀᴛs ᴠɪᴅᴇᴏ.
+""" 
