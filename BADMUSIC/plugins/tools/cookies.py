@@ -48,12 +48,12 @@ async def check_cookies(video_url):
 )
 async def list_formats(client, message):
     status_message = "sᴛᴀᴛᴜs⚣\n\n"
-    status_message += "ᴄᴏᴏᴋɪᴇs⚣︎ ᴄʜᴇᴄᴋɪɴɢ ... \nᴀᴜᴛʜ ᴛᴏᴋᴇɴ⚣︎ ᴄʜᴇᴄᴋɪɴɢ..."
+    status_message += "ᴄᴏᴏᴋɪᴇs⚣︎ ᴄʜᴇᴄᴋɪɴɢ ... "
     status_msg = await message.reply_text(status_message)
 
     cookie_status = await check_cookies("https://www.youtube.com/watch?v=LLF3GMfNEYU")
     status_message = "sᴛᴀᴛᴜs⚣\n\n"
-    status_message += f"ᴄᴏᴏᴋɪᴇs⚣︎ {'✅ ᴀʟɪᴠᴇ' if cookie_status else '❌ ᴅᴇᴀᴅ'}\nAuth Token: Checking..."
+    status_message += f"ᴄᴏᴏᴋɪᴇs⚣︎ {'✅ ᴀʟɪᴠᴇ' if cookie_status else '❌ ᴅᴇᴀᴅ'}"
     await status_msg.edit_text(status_message)
 
     use_token = await check_auth_token()
