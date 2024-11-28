@@ -41,6 +41,7 @@ except PeerIdInvalid:
     print("Unable to resolve peer. Make sure the bot has interacted with this peer.")
     return
 
+user = await app.get_users("username_or_user_id")
 
 @app.on_callback_query(filters.regex("unban_userbot"))
 async def unban_assistant_callback(client, callback_query):
@@ -180,7 +181,6 @@ def PlayWrapper(command):
                         return await message.reply_text(_["play_4"])
 
         # Video play check
-        user = await app.get_users("username_or_user_id")
         video = True if (message.command[0][0] == "v" or "-v" in message.text) else None
         fplay = True if message.command[0][-1] == "e" else None
 
