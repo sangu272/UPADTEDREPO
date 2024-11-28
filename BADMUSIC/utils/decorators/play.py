@@ -35,14 +35,6 @@ from pyrogram.errors import ChatAdminRequired
 
 from pyrogram.errors import PeerIdInvalid
 
-try:
-    common_chats = await userbot.get_common_chats(app.id)
-except PeerIdInvalid:
-    print("Unable to resolve peer. Make sure the bot has interacted with this peer.")
-    return
-
-user = await app.get_users("username_or_user_id")
-
 @app.on_callback_query(filters.regex("unban_userbot"))
 async def unban_assistant_callback(client, callback_query):
     chat_id = callback_query.message.chat.id
