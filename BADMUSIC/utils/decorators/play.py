@@ -1,18 +1,11 @@
-import asyncio
-
-from pyrogram.enums import ChatMemberStatus
-from pyrogram.errors import (
-    ChatAdminRequired,
-    InviteRequestSent,
-    UserAlreadyParticipant,
-    UserNotParticipant,
-)
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from pyrogram.errors import ChannelPrivate
+
 from config import PLAYLIST_IMG_URL, PRIVATE_BOT_MODE
-from config import SUPPORT_GROUP as SUPPORT_CHAT
+from config import adminlist
 from strings import get_string
-from BADMUSIC import YouTube, app
+from BADMUSIC import app, LOGGER, Resso, SoundCloud, Spotify, Telegram, YouTube, app
 from BADMUSIC.core.call import BAD
 from BADMUSIC.misc import SUDOERS
 from BADMUSIC.utils.database import (
@@ -25,7 +18,6 @@ from BADMUSIC.utils.database import (
     is_commanddelete_on,
     is_maintenance,
     is_served_private_chat,
-    set_loop,
 )
 from BADMUSIC.utils.inline import botplaylist_markup
 
@@ -35,14 +27,13 @@ links = {}
 def PlayWrapper(command):
     async def wrapper(client, message):
         language = await get_lang(message.chat.id)
-        userbot = await get_assistant(message.chat.id)
         _ = get_string(language)
         if message.sender_chat:
             upl = InlineKeyboardMarkup(
                 [
                     [
                         InlineKeyboardButton(
-                            text="ʜᴏᴡ ᴛᴏ ғɪx ?",
+                            text="How to Fix ?",
                             callback_data="AnonymousAdmin",
                         ),
                     ]
@@ -52,20 +43,18 @@ def PlayWrapper(command):
 
         if await is_maintenance() is False:
             if message.from_user.id not in SUDOERS:
-                return await message.reply_text(
-                    text=f"{app.mention} ɪs ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ, ᴠɪsɪᴛ <a href={SUPPORT_CHAT}>sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ</a> ғᴏʀ ᴋɴᴏᴡɪɴɢ ᴛʜᴇ ʀᴇᴀsᴏɴ.",
-                    disable_web_page_preview=True,
-                )
+                return
+
         if PRIVATE_BOT_MODE == str(True):
             if not await is_served_private_chat(message.chat.id):
                 await message.reply_text(
-                    "**ᴘʀɪᴠᴀᴛᴇ ᴍᴜsɪᴄ ʙᴏᴛ**\n\nᴏɴʟʏ ғᴏʀ ᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴄʜᴀᴛs ғʀᴏᴍ ᴛʜᴇ ᴏᴡɴᴇʀ. ᴀsᴋ ᴍʏ ᴏᴡɴᴇʀ ᴛᴏ ᴀʟʟᴏᴡ ʏᴏᴜʀ ᴄʜᴀᴛ ғɪʀsᴛ."
+                    "**PRIVATE MUSIC BOT**\n\nOnly For Authorized chats from the owner ask my owner to allow your chat first."
                 )
                 return await app.leave_chat(message.chat.id)
         if await is_commanddelete_on(message.chat.id):
             try:
                 await message.delete()
-            except:
+            except Exception:
                 pass
 
         audio_telegram = (
@@ -78,7 +67,7 @@ def PlayWrapper(command):
             if message.reply_to_message
             else None
         )
-        url = await YouTube.url(message)
+        url = await Platform.youtube.url(message)
         if audio_telegram is None and video_telegram is None and url is None:
             if len(message.command) < 2:
                 if "stream" in message.command:
@@ -95,18 +84,17 @@ def PlayWrapper(command):
                 return await message.reply_text(_["setting_12"])
             try:
                 chat = await app.get_chat(chat_id)
-            except:
+            except Exception:
                 return await message.reply_text(_["cplay_4"])
             channel = chat.title
         else:
             chat_id = message.chat.id
             channel = None
-
         try:
             is_call_active = (await app.get_chat(chat_id)).is_call_active
             if not is_call_active:
                 return await message.reply_text(
-                    f"**» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏᴄʜᴀᴛ ғᴏᴜɴᴅ.**\n\nᴩʟᴇᴀsᴇ ᴍᴀᴋᴇ sᴜʀᴇ ʏᴏᴜ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ᴠɪᴅᴇᴏᴄʜᴀᴛ."
+                    "**No active video chat found **\n\nPlease make sure you started the voicechat."
                 )
         except Exception:
             pass
@@ -134,140 +122,22 @@ def PlayWrapper(command):
             fplay = True
         else:
             fplay = None
-
-        # Check if userbot is already present in the chat using common chats
-        userbot = await get_assistant(message.chat.id)
-        common_chats = await userbot.get_common_chats(app.username)
-        chat_matched = any(chat.id == message.chat.id for chat in common_chats)
-
-        if chat_matched:
-            # If common chat matches, skip join process and proceed
-            call_participants_id = [
-                member.chat.id async for member in userbot.get_call_members(chat_id)
-            ]
-            if await is_active_chat(chat_id) and userbot.id not in call_participants_id:
-                await BAD.st_stream(chat_id)
-                await set_loop(chat_id, 0)
-
-            return await command(
-                client,
-                message,
-                _,
-                chat_id,
-                video,
-                channel,
-                playmode,
-                url,
-                fplay,
-            )
-
-        # If common chat doesn't match, try to join via username if available
-        if message.chat.username:
+        if await is_active_chat(chat_id):
+            userbot = await get_assistant(message.chat.id)
+            # Getting all members id that in voicechat
             try:
-                await userbot.join_chat(message.chat.username)
                 call_participants_id = [
-                    member.chat.id async for member in userbot.get_call_members(chat_id)
+                    member.chat.id
+                    async for member in userbot.get_call_members(chat_id)
+                    if member.chat
                 ]
-                if (
-                    await is_active_chat(chat_id)
-                    and userbot.id not in call_participants_id
-                ):
-                    await BAD.st_stream(chat_id)
-                    await set_loop(chat_id, 0)
+                # Checking if assistant id not in list so clear queues and remove active voice chat and process
 
-                return await command(
-                    client,
-                    message,
-                    _,
-                    chat_id,
-                    video,
-                    channel,
-                    playmode,
-                    url,
-                    fplay,
-                )
-            except Exception as e:
-                pass
+                if not call_participants_id or userbot.id not in call_participants_id:
+                    await BAD.stop_stream(chat_id)
+            except ChannelPrivate:
+                pass 
 
-        # Fallback to previous flow if join via username fails
-        if not await is_active_chat(chat_id):
-            userbot_id = userbot.id
-            try:
-                try:
-                    get = await app.get_chat_member(chat_id, userbot_id)
-                except ChatAdminRequired:
-                    return await message.reply_text(_["call_1"])
-                if (
-                    get.status == ChatMemberStatus.BANNED
-                    or get.status == ChatMemberStatus.RESTRICTED
-                ):
-                    try:
-                        await app.unban_chat_member(chat_id, userbot_id)
-                    except:
-                        return await message.reply_text(
-                            text=_["call_2"].format(userbot.username, userbot_id),
-                        )
-            except UserNotParticipant:
-                if chat_id in links:
-                    invitelink = links[chat_id]
-                else:
-                    if message.chat.username:
-                        invitelink = message.chat.username
-                        try:
-                            await userbot.resolve_peer(invitelink)
-                        except:
-                            pass
-                    else:
-                        try:
-                            invitelink = await client.export_chat_invite_link(
-                                message.chat.id
-                            )
-                        except ChatAdminRequired:
-                            return await message.reply_text(_["call_1"])
-                        except Exception as e:
-                            return await message.reply_text(
-                                _["call_3"].format(app.mention, type(e).__name__)
-                            )
-
-                if invitelink.startswith("https://t.me/+"):
-                    invitelink = invitelink.replace(
-                        "https://t.me/+", "https://t.me/joinchat/"
-                    )
-                myu = await message.reply_text(_["call_5"])
-                try:
-                    await asyncio.sleep(1)
-                    await userbot.join_chat(invitelink)
-                except InviteRequestSent:
-                    try:
-                        await app.approve_chat_join_request(chat_id, userbot.id)
-                    except Exception as e:
-                        return await myu.edit(_["call_3"].format(type(e).__name__))
-                    await asyncio.sleep(1)
-                    await myu.edit(_["call_6"].format(app.mention))
-                except UserAlreadyParticipant:
-                    pass
-                except Exception as e:
-                    return await myu.edit(_["call_3"].format(type(e).__name__))
-
-                links[chat_id] = invitelink
-                try:
-                    await myu.delete()
-                except Exception:
-                    pass
-
-                try:
-                    await userbot.resolve_peer(chat_id)
-                except:
-                    pass
-
-        # Fetch call participants and stop the stream if userbot is not in the call
-        userbot = await get_assistant(message.chat.id)
-        call_participants_id = [
-            member.chat.id async for member in userbot.get_call_members(chat_id)
-        ]
-        if await is_active_chat(chat_id) and userbot.id not in call_participants_id:
-            await BAD.st_stream(chat_id)
-            await set_loop(chat_id, 0)
         return await command(
             client,
             message,
