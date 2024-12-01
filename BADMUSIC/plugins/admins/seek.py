@@ -11,9 +11,7 @@ from BADMUSIC.utils import AdminRightsCheck, seconds_to_min
 # Command
 SEEK_COMMAND = get_command("SEEK_COMMAND")
 
-@app.on_message(
-    command(["SEEK_COMMAND", "SEEK_BACK_COMMAND"]) & filters.group & ~BANNED_USERS
-)
+@app.on_message(filters.command(SEEK_COMMAND) & filters.group & ~BANNED_USERS)
 @AdminRightsCheck
 async def seek_comm(cli, message: Message, _, chat_id):
     if len(message.command) == 1:
