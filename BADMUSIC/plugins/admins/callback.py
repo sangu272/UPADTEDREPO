@@ -397,14 +397,14 @@ async def del_back_playlist(client, CallbackQuery, _):
             db[chat_id][0]["speed_path"] = None
             db[chat_id][0]["speed"] = 1.0
         if "live_" in queued:
-            n, link = await YouTube.video(videoid, True)
+            n, link = await Platform.youtube.video(videoid, True)
             if n == 0:
                 return await CallbackQuery.message.reply_text(
                     text=_["admin_7"].format(title),
                     reply_markup=close_markup(_),
                 )
             try:
-                image = await YouTube.thumbnail(videoid, True)
+                image = await Platform.youtube.thumbnail(videoid, True)
             except:
                 image = None
             try:
@@ -431,7 +431,7 @@ async def del_back_playlist(client, CallbackQuery, _):
                 _["call_7"], disable_web_page_preview=True
             )
             try:
-                file_path, direct = await YouTube.download(
+                file_path, direct = await Platform.youtube.download(
                     videoid,
                     mystic,
                     videoid=True,
@@ -440,7 +440,7 @@ async def del_back_playlist(client, CallbackQuery, _):
             except:
                 return await mystic.edit_text(_["call_6"])
             try:
-                image = await YouTube.thumbnail(videoid, True)
+                image = await Platform.youtube.thumbnail(videoid, True)
             except:
                 image = None
             try:
