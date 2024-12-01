@@ -32,7 +32,7 @@ userbot = Userbot()
 
 from .platforms import *
 
-YouTube = YouTubeAPI()
+YouTube = YouTube()
 Carbon = CarbonAPI()
 Spotify = SpotifyAPI()
 Apple = AppleAPI()
