@@ -18,7 +18,7 @@ from youtubesearchpython.__future__ import VideosSearch
 import config
 from config import BANNED_USERS, START_IMG_URL
 from strings import get_string
-from BADMUSIC import HELPABLE, Telegram, YouTube, app
+from BADMUSIC import Platform, app
 from BADMUSIC.misc import SUDOERS, _boot_
 from BADMUSIC.plugins.play.playlist import del_plist_msg
 from BADMUSIC.plugins.sudo.sudoers import sudoers_list
@@ -137,7 +137,7 @@ async def start_comm(client, message: Message, _):
                     if vidid == "telegram":
                         msg += f"🔗[ᴛᴇʟᴇɢʀᴀᴍ ғɪʟᴇs ᴀɴᴅ ᴀᴜᴅɪᴏs]({config.SUPPORT_GROUP}) ** played {count} ᴛɪᴍᴇs**\n\n"
                     else:
-                        msg += f"🔗 [{title}](https://www.youtube.com/watch?v={vidid}) ** played {count} times**\n\n"
+                        msg += f"🔗 [{title}](https://www..com/watch?v={vidid}) ** played {count} times**\n\n"
                 msg = _["ustats_2"].format(tot, tota, limit) + msg
                 return videoid, msg
 
@@ -146,7 +146,7 @@ async def start_comm(client, message: Message, _):
             except Exception as e:
                 print(e)
                 return
-            thumbnail = await YouTube.thumbnail(videoid, True)
+            thumbnail = await Platform.YouTube.thumbnail(videoid, True)
             await m.delete()
             await message.reply_photo(photo=thumbnail, caption=msg)
             return
@@ -167,7 +167,7 @@ async def start_comm(client, message: Message, _):
             lyrical = config.lyrical
             lyrics = lyrical.get(query)
             if lyrics:
-                await Telegram.send_split_text(message, lyrics)
+                await Platform.Telegram.send_split_text(message, lyrics)
                 return
             else:
                 await message.reply_text("ғᴀɪʟᴇᴅ ᴛᴏ ɢᴇᴛ ʟʏʀɪᴄs.")
