@@ -13,7 +13,7 @@ from BADMUSIC.utils.exceptions import AssistantErr
 from BADMUSIC.utils.inline import aq_markup, close_markup, stream_markup
 from BADMUSIC.utils.pastebin import BADBin
 from BADMUSIC.utils.stream.queue import put_queue, put_queue_index
-from BADMUSIC.utils.thumbnails import get_thumb
+from BADMUSIC.utils.thumbnails import gen_thumb
 
 
 async def stream(
