@@ -12,7 +12,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtube_search import YoutubeSearch
 
 from config import BANNED_USERS, SERVER_PLAYLIST_LIMIT
-from BADMUSIC import Carbon, app
+from BADMUSIC import Platform, app
 from BADMUSIC.utils.decorators.language import language, languageCB
 from BADMUSIC.utils.inline.playlist import (
     botplaylist_markup,
