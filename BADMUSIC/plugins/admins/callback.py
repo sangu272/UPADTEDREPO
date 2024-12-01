@@ -11,7 +11,7 @@ from config import (
     TELEGRAM_VIDEO_URL,
     adminlist,
 )
-from BADMUSIC import YouTube, app
+from YukkiMusic import Platform, app
 from BADMUSIC.core.call import BAD as BAD
 from BADMUSIC.misc import SUDOERS, db
 from BADMUSIC.utils.database import (
