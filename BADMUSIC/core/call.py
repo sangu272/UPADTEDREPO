@@ -529,7 +529,7 @@ class Call(PyTgCalls):
             check[0]["played"] = 0
             video = True if str(streamtype) == "video" else False
             if "live_" in queued:
-                n, link = await YouTube.video(videoid, True)
+                n, link = await Platform.youtube.video(videoid, True)
                 if n == 0:
                     return await app.send_message(
                         original_chat_id,
@@ -543,7 +543,7 @@ class Call(PyTgCalls):
                     )
                 else:
                     try:
-                        image = await YouTube.thumbnail(videoid, True)
+                        image = await Platform.youtube.thumbnail(videoid, True)
                     except:
                         image = None
                     if image and config.PRIVATE_BOT_MODE == str(True):
@@ -601,7 +601,7 @@ class Call(PyTgCalls):
                     )
                 else:
                     try:
-                        image = await YouTube.thumbnail(videoid, True)
+                        image = await Platform.youtube.thumbnail(videoid, True)
                     except:
                         image = None
                     if image and config.PRIVATE_BOT_MODE == str(True):
