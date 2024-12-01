@@ -28,7 +28,7 @@ from pytgcalls.types.stream import StreamAudioEnded
 
 import config
 from strings import get_string
-from BADMUSIC import LOGGER, YouTube, app
+from BADMUSIC import LOGGER, Platform, app
 from BADMUSIC.misc import db
 from BADMUSIC.utils.database import (
     add_active_chat,
