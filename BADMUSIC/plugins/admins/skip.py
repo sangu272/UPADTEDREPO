@@ -3,7 +3,7 @@ from pyrogram.types import InlineKeyboardMarkup, Message
 
 import config
 from config import BANNED_USERS
-from strings import command
+from strings import get_command
 from BADMUSIC import Platform, app
 from BADMUSIC.core.call import BAD
 from BADMUSIC.misc import db
@@ -13,6 +13,8 @@ from BADMUSIC.utils.inline.play import stream_markup, telegram_markup
 from BADMUSIC.utils.stream.autoclear import auto_clean
 from BADMUSIC.utils.thumbnails import gen_thumb
 
+# Commands
+SKIP_COMMAND = get_command("SKIP_COMMAND")
 
 @app.on_message(command("SKIP_COMMAND") & filters.group & ~BANNED_USERS)
 @AdminRightsCheck
