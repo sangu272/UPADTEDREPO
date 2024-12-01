@@ -11,7 +11,7 @@ from BADMUSIC.misc import db
 from BADMUSIC.utils.database import add_active_video_chat, is_active_chat
 from BADMUSIC.utils.exceptions import AssistantErr
 from BADMUSIC.utils.inline import aq_markup, close_markup, stream_markup
-from BADMUSIC.utils.pastebin import BADBin
+from BADMUSIC.utils.pastebin import BADbin
 from BADMUSIC.utils.stream.queue import put_queue, put_queue_index
 from BADMUSIC.utils.thumbnails import gen_thumb
 
@@ -116,7 +116,7 @@ async def stream(
         if count == 0:
             return
         else:
-            link = await BADBin(msg)
+            link = await BADbin(msg)
             lines = msg.count("\n")
             if lines >= 17:
                 car = os.linesep.join(msg.split(os.linesep)[:17])
