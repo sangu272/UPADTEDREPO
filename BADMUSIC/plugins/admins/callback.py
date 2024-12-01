@@ -484,7 +484,7 @@ async def del_back_playlist(client, CallbackQuery, _):
                 image = None
             else:
                 try:
-                    image = await YouTube.thumbnail(videoid, True)
+                    image = await Platform.youtube.thumbnail(videoid, True)
                 except:
                     image = None
             try:
@@ -573,7 +573,7 @@ async def del_back_playlist(client, CallbackQuery, _):
         await CallbackQuery.answer()
         mystic = await CallbackQuery.message.reply_text(_["admin_32"])
         if "vid_" in file_path:
-            n, file_path = await YouTube.video(playing[0]["vidid"], True)
+            n, file_path = await Platform.youtube.video(playing[0]["vidid"], True)
             if n == 0:
                 return await mystic.edit_text(_["admin_30"])
         try:
