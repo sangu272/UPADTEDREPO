@@ -583,7 +583,7 @@ class Call(PyTgCalls):
             elif "vid_" in queued:
                 mystic = await app.send_message(original_chat_id, _["call_8"])
                 try:
-                    file_path, direct = await YouTube.download(
+                    file_path, direct = await Platform.youtube.download(
                         videoid,
                         mystic,
                         videoid=True,
@@ -672,7 +672,7 @@ class Call(PyTgCalls):
                     image = None
                 else:
                     try:
-                        image = await YouTube.thumbnail(videoid, True)
+                        image = await Platform.youtube.thumbnail(videoid, True)
                     except:
                         image = None
                 if video:
