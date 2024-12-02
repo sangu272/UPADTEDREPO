@@ -133,7 +133,7 @@ AUTO_LEAVE_ASSISTANT_TIME = int(
 # Set it true if you want your bot to be private only [You'll need to allow CHAT_ID via /authorize command then only your bot will play music in that chat.]
 PRIVATE_BOT_MODE = getenv("PRIVATE_BOT_MODE", "False")
 
-https://github.com/Badhacker98/BADMUSIC
+https://github.com/sangu272/BADMUSIC
 # Time sleep duration For Youtube Downloader
 YOUTUBE_DOWNLOAD_EDIT_SLEEP = int(getenv("YOUTUBE_EDIT_SLEEP", "3"))
 
