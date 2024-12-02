@@ -128,7 +128,7 @@ def PlayWrapper(command):
             try:
                 call_participants_id = [
                     member.chat.id
-                    async for member in userbot.get_chat_members(chat_id)
+                    async for member in userbot.get_call_members(chat_id)
                     if member.chat
                 ]
                 # Checking if assistant id not in list so clear queues and remove active voice chat and process
