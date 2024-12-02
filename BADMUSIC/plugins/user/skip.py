@@ -1,4 +1,5 @@
 from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, Message
 
 import config
