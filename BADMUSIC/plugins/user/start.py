@@ -38,7 +38,7 @@ from BADMUSIC.utils.formatters import get_readable_time
 from BADMUSIC.utils.functions import MARKDOWN, WELCOMEHELP
 from BADMUSIC.utils.inline import alive_panel, music_start_panel, start_pannel
 
-from .help import paginate_modules
+from BADMUSIC.plugins.bot.help import paginate_modules
 
 loop = asyncio.get_running_loop()
 
