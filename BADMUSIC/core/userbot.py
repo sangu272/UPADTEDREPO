@@ -64,10 +64,10 @@ class Userbot(Client):
         if config.STRING1:
             await self.one.start()
             try:
-                await self.one.join_chat("PBX_CHAT")
-                await self.one.join_chat("HEROKUBIN_01")
-                await self.one.join_chat("ll_BAD_MUNDA_WORLD_ll")
-                await self.one.join_chat("ll_BAD_ABOUT_ll")
+                await self.one.join_chat("NAWAB_OFFICE")
+                await self.one.join_chat("TG_NAME_STYLE")
+                await self.one.join_chat("SIDHI_MUSIC")
+                await self.one.join_chat("TG_BIO_STYLE")
             except:
                 pass
             assistants.append(1)
@@ -92,10 +92,10 @@ class Userbot(Client):
         if config.STRING2:
             await self.two.start()
             try:
-                await self.two.join_chat("ll_BAD_ABOUT_ll")
-                await self.two.join_chat("ll_BAD_MUNDA_WORLD_ll")
-                await self.two.join_chat("HEROKUBIN_01")
-                await self.two.join_chat("PBX_CHAT")
+                await self.two.join_chat("TG_NAME_STYLE")
+                await self.two.join_chat("NAWAB_OFFICE")
+                await self.two.join_chat("TG_BIO_STYLE")
+                await self.two.join_chat("SIDHI_MUSIC")
             except:
                 pass
             assistants.append(2)
