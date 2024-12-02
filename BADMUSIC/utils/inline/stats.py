@@ -1,6 +1,3 @@
-# Copyright (C) 2024 by Badhacker98@Github, < https://github.com/Badhacker98 >.
-# Owner https://t.me/ll_BAD_MUNDA_ll
-
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from BADMUSIC import app
@@ -168,3 +165,4 @@ def top_ten_stats_markup(_):
         ]
     )
     return upl
+                
