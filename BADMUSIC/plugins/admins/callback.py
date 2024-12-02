@@ -33,7 +33,6 @@ from BADMUSIC.utils.inline import (
     panel_markup_2,
     panel_markup_3,
     stream_markup,
-    stream_markup2,
 )
 from BADMUSIC.utils.inline.play import stream_markup
 from BADMUSIC.utils.stream.autoclear import auto_clean
