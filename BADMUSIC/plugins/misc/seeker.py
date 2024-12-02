@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from pyrogram.types import InlineKeyboardMarkup
 
 from strings import get_string
-from BADMUSIC.core.call import Yukki
+from BADMUSIC.core.call import BAD
 from BADMUSIC.misc import db
 from BADMUSIC.utils.database import (
     get_active_chats,
@@ -59,7 +59,7 @@ async def leave_if_muted():
                             members.append(member)
                     except ValueError:
                         try:
-                            await Yukki.stop_stream(chat_id)
+                            await BAD.stop_stream(chat_id)
                         except Exception:
                             pass
                         continue
@@ -72,7 +72,7 @@ async def leave_if_muted():
                     is_muted = bool(m.is_muted and not m.can_self_unmute)
 
                     if is_muted:
-                        await Yukki.stop_stream(chat_id)
+                        await BAD.stop_stream(chat_id)
                         await set_loop(chat_id, 0)
 
                     del muted[chat_id]
@@ -111,13 +111,13 @@ async def markup_timer():
                         members.append(member)
                 except ValueError:
                     try:
-                        await Yukki.stop_stream(chat_id)
+                        await BAD.stop_stream(chat_id)
                     except Exception:
                         pass
                     continue
 
                 if not members:
-                    await Yukki.stop_stream(chat_id)
+                    await BAD.stop_stream(chat_id)
                     await set_loop(chat_id, 0)
                     continue
 
